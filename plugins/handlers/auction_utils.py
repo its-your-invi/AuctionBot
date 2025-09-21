@@ -266,7 +266,7 @@ async def fetch_team_players(bot, message):
     chat_id = resolve_chat_id(message.chat.id)
 
     team_data = teams_col.find_one(
-        {"chat_id": chat_id, "team_name": {"$regex": f"^{team_name}$", "$options": "i"}},
+        {"chat_id": chat_id, "team_name": {"$regex": f".*{team_name}.*", "$options": "i"}},
         {"_id": 0}
     )
 
@@ -311,30 +311,29 @@ async def fetch_team_players(bot, message):
 @co_owner
 async def add_bidder(bot, message):
     if len(message.command) < 2 and not message.reply_to_message:
-        return await message.reply("⚠️ Usage:\n- /add_bidder {team_name} {user_id/username}\n- Or reply to a user with /add_bidder {team_name}")
+        return await message.reply("⚠️ Usage:\n- /add_bidder {user_id/username} {team_name}\n- Or reply to a user with /add_bidder {team_name}")
 
     chat_id = resolve_chat_id(message.chat.id)
-    team_name = message.command[1] if len(message.command) > 1 else None
-
-    # Check team name
-    if not team_name:
-        return await message.reply("⚠️ Please provide a team name.")
 
     # Get the target user
     if message.reply_to_message:
         target_user = message.reply_to_message.from_user
+        team_name = message.command[1]
     elif len(message.command) > 2:
-        identifier = message.command[2]
+        identifier = message.command[1]
         target_user = await resolve_user(bot, identifier)
+        team_name = message.command[2]
     else:
         return await message.reply("⚠️ No user provided (reply or pass username/ID).")
+
+    if not team_name:
+        return await message.reply("⚠️ Please provide a team name.")
 
     if not target_user:
         return await message.reply("❌ Could not resolve user.")
 
-    # Find team in this tournament
     team = teams_col.find_one(
-        {"chat_id": chat_id, "team_name": {"$regex": f"^{team_name}$", "$options": "i"}}
+        {"chat_id": chat_id, "team_name": {"$regex": f".*{team_name}.*", "$options": "i"}}
     )
     if not team:
         return await message.reply(f"⚠️ Team '{team_name}' not found in this tournament.")
