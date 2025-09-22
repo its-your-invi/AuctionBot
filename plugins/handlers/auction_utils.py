@@ -352,6 +352,66 @@ async def add_bidder(bot, message):
         f"✅ Added {target_user.mention} as an extra bidder for **{team['team_name']}**."
     )
 
+@Client.on_message(filters.command("rm_bidder") & filters.group)
+@co_owner
+async def remove_bidder(bot, message):
+    """
+    /rm_bidder {username/userid} {team_name}
+    OR reply to a user: /rm_bidder {team_name}
+    Removes a bidder from a team's bidder_list.
+    """
+    chat_id = resolve_chat_id(message.chat.id) if "resolve_chat_id" in globals() else message.chat.id
+    args = message.text.split(maxsplit=2)
+
+    # Case 1: reply-to-user + /rm_bidder {team_name}
+    if message.reply_to_message and len(args) >= 2:
+        target_user = message.reply_to_message.from_user
+        team_name = args[1]
+
+    # Case 2: /rm_bidder {username/userid} {team_name}
+    elif len(args) >= 3:
+        identifier = args[1]
+        team_name = args[2]
+
+        target_user = await resolve_user(bot, identifier)
+        if not target_user:
+            return await message.reply("❌ Could not resolve user.")
+    else:
+        return await message.reply(
+            "⚠️ Usage:\n"
+            "   /rm_bidder {username/userid} {team_name}\n"
+            "   (or reply to a user) /rm_bidder {team_name}"
+        )
+
+    # Tournament check
+    tournament = get_tournament(chat_id)
+    if not tournament:
+        return await message.reply("⚠️ No active tournament here.")
+
+    # Find team
+    team = teams_col.find_one({"chat_id": chat_id, "team_name": {"$regex": f".*{team_name}.*", "$options": "i"}})
+    if not team:
+        return await message.reply(f"⚠️ Team **{team_name}** not found in this tournament.")
+
+    # Prevent removing the owner
+    if target_user.id == team["owner_id"]:
+        return await message.reply("❌ You cannot remove the team owner from bidder list.")
+
+    # Ensure user is in bidder_list
+    if target_user.id not in team.get("bidder_list", []):
+        return await message.reply(f"⚠️ {target_user.mention} is not a bidder in team **{team_name}**.")
+
+    # Update DB
+    teams_col.update_one(
+        {"chat_id": chat_id, "team_name": team_name},
+        {"$pull": {"bidder_list": target_user.id}}
+    )
+
+    await message.reply(
+        f"🗑 Removed {target_user.mention} from bidder list of team **{team_name}**."
+    )
+
+
 @Client.on_message(filters.command("info") & filters.group)
 @group_admin
 async def get_player_info(bot, message):

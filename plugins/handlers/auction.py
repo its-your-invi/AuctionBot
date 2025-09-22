@@ -202,6 +202,10 @@ async def place_bid(bot, message):
 
     team_name = team["team_name"]
 
+    players_count = len(team.get("sold_players", []))
+    if players_count > 10 :
+        return await message.reply(f"❌ {team_name} have bought maximum playeres. You can't bid anymore.")
+
     # Prevent same team consecutive bids
     if auction.leading_team == team_name:
         return await message.reply("⚠️ Your team already has the highest bid. Wait for another team to overbid.")
