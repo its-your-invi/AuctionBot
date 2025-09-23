@@ -108,12 +108,13 @@ def co_owner(mystic):
         if message.from_user and message.from_user.id:
             chat_member = await client.get_chat_member(message.chat.id, message.from_user.id)
             if chat_member.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR]:
-                if message.from_user.id in [5930803951, 8391128611]:
-                    pass
-                elif chat_member.privileges.can_promote_members == True :
-                    pass
-                else :
-                    return
+                pass
+                # if message.from_user.id in [5930803951, 8391128611]:
+                #     pass
+                # elif chat_member.privileges.can_promote_members == True :
+                #     pass
+                # else :
+                #     return
             elif message.from_user.id in [5930803951, 6098821193, 8391128611]:
                 pass
             else:

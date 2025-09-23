@@ -393,17 +393,13 @@ async def remove_bidder(bot, message):
     if not team:
         return await message.reply(f"⚠️ Team **{team_name}** not found in this tournament.")
 
-    # Prevent removing the owner
-    if target_user.id == team["owner_id"]:
-        return await message.reply("❌ You cannot remove the team owner from bidder list.")
-
     # Ensure user is in bidder_list
     if target_user.id not in team.get("bidder_list", []):
         return await message.reply(f"⚠️ {target_user.mention} is not a bidder in team **{team_name}**.")
 
     # Update DB
     teams_col.update_one(
-        {"chat_id": chat_id, "team_name": team_name},
+        {"chat_id": chat_id, "team_name": {"$regex": f".*{team_name}.*", "$options": "i"}},
         {"$pull": {"bidder_list": target_user.id}}
     )
 
