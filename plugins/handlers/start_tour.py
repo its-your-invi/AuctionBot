@@ -101,7 +101,7 @@ async def register_user_in_tournament(bot, user, chat_id: int):
         # Ask for selection
         prompt = (
             "💰 Please choose your base price (tap a button) or choose Custom:\n\n"
-            "• Ⓜ100  • Ⓜ500  • Ⓜ1000\n"
+            "• ₪100  • ₪500  • ₪1000\n"
             "• Custom - enter your own amount (multiple of 100)"
         )
         resp = await bot.ask(

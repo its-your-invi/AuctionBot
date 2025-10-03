@@ -6,11 +6,11 @@ import os
 TEMPLATES = {
     "auctionstart": {
         "path": "assets/auctionstart.png",  # background design
-        "circle": {"x": 751, "y": 388, "size": 417}
+        "circle": {"x": 123, "y": 169, "size": 265}
     },
     "auctionsold": {
         "path": "assets/sold.png",  # background design
-        "circle": {"x": 751, "y": 388, "size": 417}
+        "circle": {"x": 123, "y": 169, "size": 265}
     }
 }
 

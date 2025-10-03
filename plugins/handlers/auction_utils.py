@@ -253,7 +253,7 @@ async def add_team(bot, message):
 
     await message.reply(
         f"✅ Team **{team_name}** registered for {user.mention}\n"
-        f"💰 Starting purse: {tournament['purse']:,} ⓜ"
+        f"💰 Starting purse: {tournament['purse']:,} ₪"
     )
 
 
@@ -471,7 +471,7 @@ async def show_team_purses(bot, message):
         players_count = len(team.get("sold_players", []))
         text += (
             f"{idx}. 🏏 **{team['team_name']}**\n"
-            f"   💰 Purse Left: {purse:,} ⓜ\n"
+            f"   💰 Purse Left: {purse:,} ₪\n"
             f"   👥 Players Bought: {players_count}\n\n"
         )
 
@@ -479,6 +479,9 @@ async def show_team_purses(bot, message):
     for chunk in split_message(text):
         await message.reply(chunk)
 
+@Client.on_message(filters.command("bud") & filters.group)
+async def budlol(bot, message):
+    await message.reply("Nishuu ji special /bud lol")
 # @Client.on_message(filters.private)
 # async def contactrobot(bot, message):
 #     await message.forward(Config.LOG_CHANNEL)

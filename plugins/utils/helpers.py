@@ -8,7 +8,7 @@ from plugins.utils.templates import generate_card
 from connections.logger import group_logger
 START_KEYBOARD_BUTTON = [
     [
-        InlineKeyboardButton('➕ ᴊᴏɪɴ ᴏᴜʀ ɢʀᴏᴜᴘ ➕', url='https://t.me/MetaverseSquads'),
+        InlineKeyboardButton('➕ ᴊᴏɪɴ ᴏᴜʀ ɢʀᴏᴜᴘ ➕', url='https://t.me/CLG_fun_zone'),
     ],
     [
         InlineKeyboardButton('🌿 ʜᴇʟᴘ ᴍᴇɴᴜ 🌿', callback_data="DEVS")
@@ -192,5 +192,6 @@ async def send_sold_message(bot, chat_id: int, auction):
             photo=card,
             caption=sold_message
         )
-        except:
+        except Exception as e:
+            print(f"Error while sending image: {e}")
             pass
